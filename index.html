@@ -27,12 +27,22 @@
             <div id="setup-screen" class="screen active">
                 <div class="setup-container">
                     <h2>Welcome to Your Garden</h2>
-                    <p>Let's set up your cycle tracking to begin nurturing your plant.</p>
+                    <p>Let's get you set up!</p>
                     
                     <form id="cycle-setup-form" class="setup-form">
                         <div class="form-group">
-                            <label for="last-period">Last period date:</label>
-                            <input type="date" id="last-period" required>
+                            <label for="user-name">What's your name?</label>
+                            <input type="text" id="user-name" placeholder="Enter your name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last-period-start">When did your last period start?</label>
+                            <input type="date" id="last-period-start" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last-period-end">When did your last period end?</label>
+                            <input type="date" id="last-period-end" required>
                         </div>
                         
                         <div class="form-group">

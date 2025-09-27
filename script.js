@@ -4,6 +4,7 @@ class CycleGarden {
         this.cycleData = this.loadCycleData();
         this.plantData = this.loadPlantData();
         this.periodData = this.loadPeriodData();
+        this.userData = this.loadUserData();
         this.currentDate = new Date();
         this.calendarDate = new Date();
         this.selectedDate = null;
@@ -48,11 +49,36 @@ class CycleGarden {
         localStorage.setItem('cycleGarden_periodData', JSON.stringify(this.periodData));
     }
 
+    loadUserData() {
+        const saved = localStorage.getItem('cycleGarden_userData');
+        return saved ? JSON.parse(saved) : null;
+    }
+
+    saveUserData() {
+        localStorage.setItem('cycleGarden_userData', JSON.stringify(this.userData));
+    }
+
+    // Update header with user's name
+    updateHeader() {
+        if (this.userData && this.userData.name) {
+            const appTitle = document.querySelector('.app-title');
+            const appSubtitle = document.querySelector('.app-subtitle');
+            
+            if (appTitle) {
+                appTitle.textContent = `🌱 Berry - Welcome, ${this.userData.name}`;
+            }
+            if (appSubtitle) {
+                appSubtitle.textContent = `Nurture your inner growth through your natural cycles`;
+            }
+        }
+    }
+
     // App Initialization
     initializeApp() {
         if (!this.cycleData) {
             this.showSetupScreen();
         } else {
+            this.updateHeader();
             this.showGardenScreen();
             this.updateGarden();
             this.renderCalendar();
@@ -190,24 +216,68 @@ class CycleGarden {
 
     // Cycle Setup
     handleCycleSetup() {
-        const lastPeriod = document.getElementById('last-period').value;
+        const userName = document.getElementById('user-name').value.trim();
+        const lastPeriodStart = document.getElementById('last-period-start').value;
+        const lastPeriodEnd = document.getElementById('last-period-end').value;
         const cycleLength = parseInt(document.getElementById('cycle-length').value);
 
-        if (!lastPeriod || !cycleLength) {
+        if (!userName || !lastPeriodStart || !lastPeriodEnd || !cycleLength) {
             this.showNotification('Please fill in all fields', 'error');
             return;
         }
 
+        // Validate that end date is after start date
+        const startDate = new Date(lastPeriodStart);
+        const endDate = new Date(lastPeriodEnd);
+        
+        if (endDate <= startDate) {
+            this.showNotification('Period end date must be after start date', 'error');
+            return;
+        }
+
+        // Save user data
+        this.userData = {
+            name: userName,
+            setupDate: new Date()
+        };
+
+        // Save cycle data using the period start date
         this.cycleData = {
-            lastPeriod: new Date(lastPeriod),
+            lastPeriod: new Date(lastPeriodStart),
             cycleLength: cycleLength,
             setupDate: new Date()
         };
 
+        // Log the period data
+        const startDateStr = startDate.toISOString().split('T')[0];
+        const endDateStr = endDate.toISOString().split('T')[0];
+        
+        // Add period start
+        this.periodData[startDateStr] = {
+            type: 'start',
+            flow: 'medium', // default flow
+            symptoms: [],
+            notes: 'Initial period log'
+        };
+
+        // Add period end
+        this.periodData[endDateStr] = {
+            type: 'end',
+            flow: 'medium', // default flow
+            symptoms: [],
+            notes: 'Initial period log'
+        };
+
+        // Auto-fill days between start and end
+        this.autoFillPeriodDays(startDateStr, endDateStr);
+
+        this.saveUserData();
         this.saveCycleData();
+        this.savePeriodData();
+        this.updateHeader();
         this.showGardenScreen();
         this.updateGarden();
-        this.showNotification('Welcome to your garden! Your plant is ready to grow with you.', 'success');
+        this.showNotification(`Welcome to your garden, ${userName}! Your plant is ready to grow with you.`, 'success');
     }
 
     // Cycle Calculations
