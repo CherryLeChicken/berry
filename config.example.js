@@ -3,7 +3,7 @@
 
 const CONFIG = {
     // Get your API key from: https://makersuite.google.com/app/apikey
-    GEMINI_API_KEY: 'your_gemini_api_key_here'
+    GEMINI_API_KEY: 'AIzaSyBA-8QjQSUtjljTVt-fzGs3DurT8jdZpeE'
 };
 
 // Export for use in other files

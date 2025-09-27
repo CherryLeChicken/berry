@@ -119,6 +119,13 @@ class CycleGarden {
             });
         });
 
+        // Other mood input - handle Enter key
+        document.getElementById('other-mood-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.handleMoodLog('other');
+            }
+        });
+
         // Calendar controls
         document.getElementById('toggle-calendar').addEventListener('click', () => {
             this.toggleCalendar();
@@ -644,13 +651,40 @@ class CycleGarden {
     handleMoodLog(mood) {
         const today = new Date().toDateString();
         
-        // Handle "Other" mood with custom input
+        // Handle "Other" mood with inline text input
         if (mood === 'other') {
-            const customMood = prompt('How are you feeling today? Please describe:');
-            if (!customMood || customMood.trim() === '') {
-                return; // User cancelled or entered empty
+            const otherInput = document.getElementById('other-mood-input');
+            const otherButton = document.querySelector('[data-mood="other"]');
+            
+            // Toggle input visibility
+            if (otherInput.style.display === 'none') {
+                otherInput.style.display = 'block';
+                otherInput.focus();
+                otherButton.textContent = '💭 Save';
+                return; // Don't process mood yet, wait for input
+            } else {
+                // User clicked save, get the input value
+                const customMood = otherInput.value.trim();
+                if (!customMood) {
+                    this.showNotification('Please enter your mood description', 'error');
+                    return;
+                }
+                mood = customMood;
+                
+                // Hide input and reset button
+                otherInput.style.display = 'none';
+                otherInput.value = '';
+                otherButton.textContent = '💭 Other';
             }
-            mood = customMood.trim();
+        }
+        
+        // Hide other mood input if it's visible
+        const otherInput = document.getElementById('other-mood-input');
+        const otherButton = document.querySelector('[data-mood="other"]');
+        if (otherInput.style.display === 'block') {
+            otherInput.style.display = 'none';
+            otherInput.value = '';
+            otherButton.textContent = '💭 Other';
         }
         
         // Remove previous selection
@@ -995,7 +1029,7 @@ class CycleGarden {
         this.renderCalendar();
         this.closeFlowModal();
         
-        this.showNotification('Period data saved successfully!', 'success');
+        this.showNotification('Saved successfully!', 'success');
     }
 
     deleteFlowData() {
@@ -1205,7 +1239,7 @@ class CycleGarden {
         this.closeFlowModal();
         this.updatePeriodEndButton();
         
-        this.showNotification('Period data saved successfully!', 'success');
+        this.showNotification('Saved successfully!', 'success');
     }
 
     // Auto-fill days between period start and end
