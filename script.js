@@ -1,3 +1,4 @@
+
 // Cycle Garden - Main Application Logic
 class CycleGarden {
     constructor() {
