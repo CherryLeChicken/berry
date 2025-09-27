@@ -146,6 +146,46 @@ class CycleGarden {
                 this.closeFlowModal();
             }
         });
+
+        // Chatbot functionality
+        document.getElementById('chatbot-toggle').addEventListener('click', () => {
+            this.toggleChatbot();
+        });
+
+        document.getElementById('chatbot-close').addEventListener('click', () => {
+            this.closeChatbot();
+        });
+
+        document.getElementById('chatbot-send').addEventListener('click', () => {
+            this.sendChatMessage();
+        });
+
+        document.getElementById('chatbot-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.sendChatMessage();
+            }
+        });
+
+        // Suggestion buttons
+        document.querySelectorAll('.suggestion-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const suggestion = e.target.dataset.suggestion;
+                document.getElementById('chatbot-input').value = suggestion;
+                this.sendChatMessage();
+            });
+        });
+
+        // Chatbot modal backdrop click
+        document.getElementById('chatbot-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'chatbot-modal') {
+                this.closeChatbot();
+            }
+        });
+
+        // Test API connection on chatbot open
+        document.getElementById('chatbot-toggle').addEventListener('click', () => {
+            this.testApiConnection();
+        });
     }
 
     // Cycle Setup
@@ -1020,6 +1060,220 @@ class CycleGarden {
                 
                 currentDate.setDate(currentDate.getDate() + 1);
             }
+        }
+    }
+
+    // Chatbot Functionality
+    toggleChatbot() {
+        const chatbotModal = document.getElementById('chatbot-modal');
+        const chatButton = document.getElementById('chatbot-toggle');
+        
+        if (chatbotModal.classList.contains('hidden')) {
+            chatbotModal.classList.remove('hidden');
+            chatButton.style.display = 'none';
+            document.getElementById('chatbot-input').focus();
+        } else {
+            this.closeChatbot();
+        }
+    }
+
+    closeChatbot() {
+        const chatbotModal = document.getElementById('chatbot-modal');
+        const chatButton = document.getElementById('chatbot-toggle');
+        
+        chatbotModal.classList.add('hidden');
+        chatButton.style.display = 'flex';
+    }
+
+    sendChatMessage() {
+        const input = document.getElementById('chatbot-input');
+        const message = input.value.trim();
+        
+        if (!message) return;
+        
+        // Add user message to chat
+        this.addChatMessage(message, 'user');
+        input.value = '';
+        
+        // Show typing indicator
+        this.showTypingIndicator();
+        
+        // Send to Gemini API
+        this.sendToGemini(message);
+    }
+
+    addChatMessage(message, sender) {
+        const messagesContainer = document.getElementById('chatbot-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chatbot-message ${sender}-message`;
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.innerHTML = message.replace(/\n/g, '<br>');
+        
+        messageDiv.appendChild(contentDiv);
+        messagesContainer.appendChild(messageDiv);
+        
+        // Scroll to bottom
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    showTypingIndicator() {
+        const messagesContainer = document.getElementById('chatbot-messages');
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'chatbot-message bot-message typing-indicator';
+        typingDiv.id = 'typing-indicator';
+        
+        typingDiv.innerHTML = `
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        `;
+        
+        messagesContainer.appendChild(typingDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    removeTypingIndicator() {
+        const typingIndicator = document.getElementById('typing-indicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+    }
+
+    async sendToGemini(message) {
+        try {
+            // Check if CONFIG is available
+            if (!window.CONFIG || !window.CONFIG.GEMINI_API_KEY) {
+                throw new Error('API key not configured');
+            }
+
+            // Get user's current cycle phase for context
+            const currentPhase = this.getCurrentPhase();
+            const cycleDay = this.getCurrentCycleDay();
+            
+            // Create context-aware prompt
+            const systemPrompt = `You are Berry, a supportive and empowering AI companion for women's menstrual health and cycle tracking. You provide:
+
+1. **Cycle Support**: Help with period-related questions, symptoms, and cycle phases
+2. **Self-Care Guidance**: Offer practical tips for nutrition, exercise, and wellness during different cycle phases
+3. **Female Empowerment**: Provide encouraging, body-positive advice and support
+4. **Educational Content**: Explain menstrual health, hormones, and cycle science in accessible terms
+
+Current user context:
+- Current cycle phase: ${currentPhase}
+- Cycle day: ${cycleDay} of ${this.cycleData?.cycleLength || 28}
+
+Guidelines:
+- Be warm, supportive, and non-judgmental
+- Use encouraging, empowering language
+- Provide practical, actionable advice
+- Include relevant cycle phase information when helpful
+- Keep responses concise but comprehensive
+- Use emojis sparingly but effectively
+- Focus on holistic wellness and self-care
+
+Respond to the user's question: "${message}"`;
+
+            console.log('Sending request to Gemini API...');
+            console.log('API Key:', window.CONFIG.GEMINI_API_KEY ? 'Present' : 'Missing');
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${window.CONFIG.GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: systemPrompt
+                        }]
+                    }],
+                    generationConfig: {
+                        temperature: 0.7,
+                        topK: 40,
+                        topP: 0.95,
+                        maxOutputTokens: 1024,
+                    }
+                })
+            });
+
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('API Error Response:', errorText);
+                throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('API Response:', data);
+            
+            if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+                throw new Error('Invalid response format from API');
+            }
+            
+            const botResponse = data.candidates[0].content.parts[0].text;
+            
+            // Remove typing indicator and add bot response
+            this.removeTypingIndicator();
+            this.addChatMessage(botResponse, 'bot');
+            
+        } catch (error) {
+            console.error('Error calling Gemini API:', error);
+            this.removeTypingIndicator();
+            
+            let errorMessage = 'I apologize, but I\'m having trouble connecting right now. ';
+            
+            if (error.message.includes('API key not configured')) {
+                errorMessage += 'Please check your API configuration. ';
+            } else if (error.message.includes('Failed to fetch')) {
+                errorMessage += 'There seems to be a network issue. ';
+            } else if (error.message.includes('API request failed')) {
+                errorMessage += 'The API request failed. Please check your API key. ';
+            }
+            
+            errorMessage += 'Please try again in a moment, or feel free to ask me about cycle support, self-care tips, or any questions you have about your menstrual health! 🌱';
+            
+            this.addChatMessage(errorMessage, 'bot');
+        }
+    }
+
+    // Test API connection
+    async testApiConnection() {
+        console.log('Testing API connection...');
+        console.log('CONFIG available:', !!window.CONFIG);
+        console.log('API Key available:', !!window.CONFIG?.GEMINI_API_KEY);
+        
+        if (!window.CONFIG || !window.CONFIG.GEMINI_API_KEY) {
+            console.error('API key not found in CONFIG');
+            return;
+        }
+        
+        try {
+            const testResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${window.CONFIG.GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: "Hello, this is a test message."
+                        }]
+                    }]
+                })
+            });
+            
+            console.log('Test response status:', testResponse.status);
+            if (testResponse.ok) {
+                console.log('✅ API connection successful!');
+            } else {
+                console.error('❌ API connection failed:', testResponse.status);
+            }
+        } catch (error) {
+            console.error('❌ API test failed:', error);
         }
     }
 }

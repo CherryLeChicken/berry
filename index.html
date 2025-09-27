@@ -15,6 +15,12 @@
             <p class="app-subtitle">Nurture your inner growth through your natural cycles</p>
         </header>
 
+        <!-- Floating Chatbot Button -->
+        <button id="chatbot-toggle" class="floating-chatbot-btn">
+            <span class="chatbot-icon">💬</span>
+            <span class="chatbot-tooltip">Ask Berry</span>
+        </button>
+
         <!-- Main Content -->
         <main class="main-content">
             <!-- Setup Screen -->
@@ -63,7 +69,27 @@
                     <div class="cycle-info">
                         <div class="current-phase">
                             <span class="phase-label">Current Phase:</span>
-                            <span id="current-phase-name" class="phase-name">Loading...</span>
+                            <div class="phase-name-container">
+                                <span id="current-phase-name" class="phase-name">Loading...</span>
+                                <div class="phase-help" id="phase-help">
+                                    <span class="help-icon">?</span>
+                                    <div class="help-tooltip" id="phase-tooltip">
+                                        <h4>Menstrual Cycle Phases</h4>
+                                        <div class="phase-description">
+                                            <strong>Menstrual (Days 1-5):</strong> Period begins, time for rest
+                                        </div>
+                                        <div class="phase-description">
+                                            <strong>Follicular (Days 6-14):</strong> Energy rises, new growth begins
+                                        </div>
+                                        <div class="phase-description">
+                                            <strong>Ovulation (Days 14-16):</strong> Peak energy and fertility
+                                        </div>
+                                        <div class="phase-description">
+                                            <strong>Luteal (Days 17-28):</strong> More introspective, preparation time
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="cycle-progress">
                             <div class="progress-bar">
@@ -264,6 +290,45 @@
             </div>
         </main>
 
+        <!-- Chatbot Modal -->
+        <div id="chatbot-modal" class="chatbot-modal hidden">
+            <div class="chatbot-container">
+                <div class="chatbot-header">
+                    <div class="chatbot-title">
+                        <span class="chatbot-icon">🌱</span>
+                        <h3>Berry - Your Cycle Companion</h3>
+                    </div>
+                    <button id="chatbot-close" class="chatbot-close">×</button>
+                </div>
+                
+                <div class="chatbot-body">
+                    <div class="chatbot-messages" id="chatbot-messages">
+                        <div class="chatbot-message bot-message">
+                            <div class="message-content">
+                                <p>Hi! I'm Berry, your cycle companion 🌱</p>
+                                <p>I'm here to support you with cycle-related questions, self-care tips, and empowerment advice. What would you like to know?</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chatbot-input-container">
+                        <div class="chatbot-input-wrapper">
+                            <textarea id="chatbot-input" placeholder="Ask me anything about your cycle, self-care, or empowerment..." rows="2"></textarea>
+                            <button id="chatbot-send" class="chatbot-send-btn">
+                                <span class="send-icon">➤</span>
+                            </button>
+                        </div>
+                        <div class="chatbot-suggestions">
+                            <button class="suggestion-btn" data-suggestion="What should I eat during my period?">Period nutrition</button>
+                            <button class="suggestion-btn" data-suggestion="How can I manage cramps naturally?">Natural cramp relief</button>
+                            <button class="suggestion-btn" data-suggestion="Self-care tips for the luteal phase">Luteal phase care</button>
+                            <button class="suggestion-btn" data-suggestion="How to boost my energy during ovulation?">Energy boost</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Notifications -->
         <div id="notification" class="notification hidden">
             <div class="notification-content">
@@ -272,6 +337,7 @@
         </div>
     </div>
 
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
