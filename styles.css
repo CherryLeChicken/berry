@@ -812,6 +812,36 @@ body::before {
     border-color: #48bb78;
 }
 
+/* Other mood container */
+.other-mood-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.other-mood-input {
+    width: 100%;
+    max-width: 200px;
+    padding: 8px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.other-mood-input:focus {
+    outline: none;
+    border-color: #48bb78;
+    box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+}
+
+.other-mood-input::placeholder {
+    color: #a0aec0;
+    font-style: italic;
+}
+
 /* Garden Notes */
 .garden-notes {
     background: rgba(255, 255, 255, 0.7);
