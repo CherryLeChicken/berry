@@ -644,13 +644,25 @@ class CycleGarden {
     handleMoodLog(mood) {
         const today = new Date().toDateString();
         
+        // Handle "Other" mood with custom input
+        if (mood === 'other') {
+            const customMood = prompt('How are you feeling today? Please describe:');
+            if (!customMood || customMood.trim() === '') {
+                return; // User cancelled or entered empty
+            }
+            mood = customMood.trim();
+        }
+        
         // Remove previous selection
         document.querySelectorAll('.mood-btn').forEach(btn => {
             btn.classList.remove('selected');
         });
         
-        // Mark current selection
-        document.querySelector(`[data-mood="${mood}"]`).classList.add('selected');
+        // Mark current selection (only for predefined moods)
+        const moodBtn = document.querySelector(`[data-mood="${mood}"]`);
+        if (moodBtn) {
+            moodBtn.classList.add('selected');
+        }
         
         // Save mood to both plant data and period data
         const moodEntry = {
@@ -698,7 +710,12 @@ class CycleGarden {
             crampy: 'Your plant sends you gentle healing energy! 💚'
         };
         
-        this.showNotification(moodMessages[mood], 'success');
+        // Show appropriate message
+        if (moodMessages[mood]) {
+            this.showNotification(moodMessages[mood], 'success');
+        } else {
+            this.showNotification(`Your plant acknowledges your feelings: "${mood}" 💚`, 'success');
+        }
     }
 
     getMoodText(mood) {
@@ -707,7 +724,8 @@ class CycleGarden {
             good: 'Good 😌',
             okay: 'Okay 😐',
             tired: 'Tired 😴',
-            crampy: 'Crampy 😣'
+            crampy: 'Crampy 😣',
+            other: 'Other 💭'
         };
         return moodTexts[mood] || mood;
     }
