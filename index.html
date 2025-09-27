@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycle Garden - Nurture Your Inner Growth</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="app-title">🌱 Berry</h1>
+            <p class="app-subtitle">Nurture your inner growth through your natural cycles</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Setup Screen -->
+            <div id="setup-screen" class="screen active">
+                <div class="setup-container">
+                    <h2>Welcome to Your Garden</h2>
+                    <p>Let's set up your cycle tracking to begin nurturing your plant.</p>
+                    
+                    <form id="cycle-setup-form" class="setup-form">
+                        <div class="form-group">
+                            <label for="last-period">Last period date:</label>
+                            <input type="date" id="last-period" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cycle-length">Average cycle length (days):</label>
+                            <select id="cycle-length" required>
+                                <option value="">Select cycle length</option>
+                                <option value="21">21 days</option>
+                                <option value="22">22 days</option>
+                                <option value="23">23 days</option>
+                                <option value="24">24 days</option>
+                                <option value="25">25 days</option>
+                                <option value="26">26 days</option>
+                                <option value="27">27 days</option>
+                                <option value="28">28 days</option>
+                                <option value="29">29 days</option>
+                                <option value="30">30 days</option>
+                                <option value="31">31 days</option>
+                                <option value="32">32 days</option>
+                                <option value="33">33 days</option>
+                                <option value="34">34 days</option>
+                                <option value="35">35 days</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">Start Growing</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Garden Screen -->
+            <div id="garden-screen" class="screen">
+                <div class="garden-container">
+                    <!-- Cycle Info -->
+                    <div class="cycle-info">
+                        <div class="current-phase">
+                            <span class="phase-label">Current Phase:</span>
+                            <span id="current-phase-name" class="phase-name">Loading...</span>
+                        </div>
+                        <div class="cycle-progress">
+                            <div class="progress-bar">
+                                <div id="cycle-progress-fill" class="progress-fill"></div>
+                            </div>
+                            <span id="cycle-progress-text" class="progress-text">Day 1 of 28</span>
+                        </div>
+                    </div>
+
+                    <!-- Plant Display -->
+                    <div class="plant-container">
+                        <div id="plant" class="plant">
+                            <div class="plant-pot"></div>
+                            <div class="plant-stem"></div>
+                            <div class="plant-leaves"></div>
+                            <div class="plant-bloom"></div>
+                        </div>
+                        
+                        <!-- Weather Effects -->
+                        <div id="weather-effects" class="weather-effects">
+                            <div class="rain"></div>
+                            <div class="sunshine"></div>
+                        </div>
+                    </div>
+
+                    <!-- Plant Status -->
+                    <div class="plant-status">
+                        <h3 id="plant-name">Your Plant</h3>
+                        <p id="plant-description">A gentle companion growing with your cycles</p>
+                        <div class="growth-stats">
+                            <div class="stat">
+                                <span class="stat-label">Growth Level:</span>
+                                <span id="growth-level" class="stat-value">1</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Self-Care Streak:</span>
+                                <span id="care-streak" class="stat-value">0 days</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Self-Care Logging -->
+                    <div class="self-care-section">
+                        <h3>Nurture Your Plant</h3>
+                        <div class="care-actions">
+                            <button class="care-btn" data-action="hydration">
+                                💧 Hydration
+                            </button>
+                            <button class="care-btn" data-action="exercise">
+                                🏃 Exercise
+                            </button>
+                            <button class="care-btn" data-action="meditation">
+                                🧘 Meditation
+                            </button>
+                            <button class="care-btn" data-action="rest">
+                                😴 Rest
+                            </button>
+                        </div>
+                        
+                        <div class="mood-logging">
+                            <h4>How are you feeling today?</h4>
+                            <div class="mood-buttons">
+                                <button class="mood-btn" data-mood="great">😊 Great</button>
+                                <button class="mood-btn" data-mood="good">😌 Good</button>
+                                <button class="mood-btn" data-mood="okay">😐 Okay</button>
+                                <button class="mood-btn" data-mood="tired">😴 Tired</button>
+                                <button class="mood-btn" data-mood="crampy">😣 Crampy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Garden Notes -->
+                    <div id="garden-notes" class="garden-notes">
+                        <div class="note">
+                            <p>Your plant is resting during your menstrual phase. This is a time for gentle self-care.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Notifications -->
+        <div id="notification" class="notification hidden">
+            <div class="notification-content">
+                <span id="notification-text"></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

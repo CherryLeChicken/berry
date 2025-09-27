@@ -1,0 +1,592 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.app-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.app-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+.app-subtitle {
+    font-size: 1.1rem;
+    color: #718096;
+    font-weight: 300;
+}
+
+/* Screen Management */
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Setup Screen */
+.setup-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+.setup-container h2 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.setup-container p {
+    color: #718096;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+.setup-form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #a0aec0;
+    box-shadow: 0 0 0 3px rgba(160, 174, 192, 0.1);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Garden Screen */
+.garden-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+/* Cycle Info */
+.cycle-info {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.current-phase {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.phase-label {
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.phase-name {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 1.1rem;
+}
+
+.cycle-progress {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    color: #718096;
+    white-space: nowrap;
+}
+
+/* Plant Container */
+.plant-container {
+    position: relative;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+    background: linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.plant {
+    position: relative;
+    z-index: 2;
+    transition: all 0.5s ease;
+}
+
+.plant-pot {
+    width: 80px;
+    height: 60px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    border-radius: 0 0 15px 15px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.plant-pot::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    height: 10px;
+    background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+    border-radius: 15px;
+}
+
+.plant-stem {
+    width: 8px;
+    height: 80px;
+    background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+    border-radius: 4px;
+    margin: 0 auto;
+    position: relative;
+    transition: all 0.5s ease;
+}
+
+.plant-leaves {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    transition: all 0.5s ease;
+}
+
+.plant-leaves::before,
+.plant-leaves::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    border-radius: 50% 0;
+    transition: all 0.5s ease;
+}
+
+.plant-leaves::before {
+    top: 0;
+    left: 0;
+    transform: rotate(-45deg);
+}
+
+.plant-leaves::after {
+    top: 0;
+    right: 0;
+    transform: rotate(45deg);
+}
+
+.plant-bloom {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    opacity: 0;
+    transition: all 0.5s ease;
+}
+
+.plant-bloom::before,
+.plant-bloom::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border-radius: 50%;
+}
+
+.plant-bloom::before {
+    top: 0;
+    left: 0;
+}
+
+.plant-bloom::after {
+    top: 0;
+    right: 0;
+}
+
+/* Plant Phase Styles */
+.plant.menstrual .plant-stem {
+    height: 40px;
+    opacity: 0.7;
+}
+
+.plant.menstrual .plant-leaves {
+    opacity: 0.5;
+    transform: translateX(-50%) scale(0.8);
+}
+
+.plant.follicular .plant-stem {
+    height: 100px;
+}
+
+.plant.follicular .plant-leaves {
+    transform: translateX(-50%) scale(1.1);
+}
+
+.plant.ovulation .plant-bloom {
+    opacity: 1;
+    animation: bloom 2s ease-in-out infinite alternate;
+}
+
+.plant.luteal .plant-bloom {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.2);
+}
+
+@keyframes bloom {
+    0% { transform: translateX(-50%) scale(1); }
+    100% { transform: translateX(-50%) scale(1.1); }
+}
+
+/* Weather Effects */
+.weather-effects {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.rain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(transparent, rgba(59, 130, 246, 0.1));
+    opacity: 0;
+    animation: rain 2s ease-in-out infinite;
+}
+
+.sunshine {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    opacity: 0;
+    animation: sunshine 3s ease-in-out infinite;
+}
+
+@keyframes rain {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+@keyframes sunshine {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+/* Plant Status */
+.plant-status {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.plant-status h3 {
+    font-size: 1.5rem;
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+.plant-status p {
+    color: #718096;
+    margin-bottom: 20px;
+}
+
+.growth-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #718096;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+/* Self-Care Section */
+.self-care-section {
+    margin-bottom: 30px;
+}
+
+.self-care-section h3 {
+    text-align: center;
+    color: #2d3748;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.care-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.care-btn {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.care-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: #a0aec0;
+    transform: translateY(-2px);
+}
+
+.care-btn:active {
+    transform: translateY(0);
+}
+
+.care-btn.completed {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border-color: #10b981;
+}
+
+.mood-logging {
+    text-align: center;
+}
+
+.mood-logging h4 {
+    color: #4a5568;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.mood-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.mood-btn {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.mood-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: #a0aec0;
+}
+
+.mood-btn.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+/* Garden Notes */
+.garden-notes {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+}
+
+.garden-notes .note {
+    color: #4a5568;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    z-index: 1000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.hidden {
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .app-container {
+        padding: 15px;
+    }
+    
+    .app-title {
+        font-size: 2rem;
+    }
+    
+    .setup-container {
+        padding: 30px 20px;
+    }
+    
+    .garden-container {
+        padding: 20px;
+    }
+    
+    .growth-stats {
+        gap: 20px;
+    }
+    
+    .care-actions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .mood-buttons {
+        gap: 8px;
+    }
+    
+    .mood-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .care-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .mood-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+}
