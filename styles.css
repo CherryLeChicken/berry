@@ -180,6 +180,19 @@ body::before {
     font-weight: 300;
 }
 
+/* Find this rule in your stylesheet */
+.app-title, .app-subtitle {
+    opacity: 0;
+    
+    /* property | duration | timing-function | DELAY */
+    transition: opacity 0.8s ease-in-out 0.5s; /* <-- Add the delay here (e.g., 0.5s) */
+}
+
+/* The .fade-in class stays the same */
+.fade-in {
+    opacity: 1;
+}
+
 /* Screen Management */
 .screen {
     display: none;

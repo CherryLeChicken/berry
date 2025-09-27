@@ -66,11 +66,24 @@ class CycleGarden {
             const appTitle = document.querySelector('.app-title');
             const appSubtitle = document.querySelector('.app-subtitle');
             
+            // Define your delay in milliseconds (e.g., 500ms = 0.5s)
+            const fadeInDelay = 500; 
+
             if (appTitle) {
                 appTitle.textContent = `Welcome, ${this.userData.name}`;
+                
+                // Wait for the delay before adding the class
+                setTimeout(() => {
+                    appTitle.classList.add('fade-in'); 
+                }, fadeInDelay);
             }
             if (appSubtitle) {
                 appSubtitle.textContent = `Nurture your inner growth through your natural cycles`;
+                
+                // Wait for the delay before adding the class
+                setTimeout(() => {
+                    appSubtitle.classList.add('fade-in');
+                }, fadeInDelay);
             }
         }
     }
