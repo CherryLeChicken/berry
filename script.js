@@ -67,7 +67,7 @@ class CycleGarden {
             const appSubtitle = document.querySelector('.app-subtitle');
             
             if (appTitle) {
-                appTitle.textContent = `🌱 Berry - Welcome, ${this.userData.name}`;
+                appTitle.textContent = `Welcome, ${this.userData.name}`;
             }
             if (appSubtitle) {
                 appSubtitle.textContent = `Nurture your inner growth through your natural cycles`;
@@ -281,7 +281,7 @@ class CycleGarden {
         
         // Add period start
         this.periodData[startDateStr] = {
-            type: 'start',
+            periodType: 'start',
             flow: 'medium', // default flow
             symptoms: [],
             notes: 'Initial period log'
@@ -289,14 +289,14 @@ class CycleGarden {
 
         // Add period end
         this.periodData[endDateStr] = {
-            type: 'end',
+            periodType: 'end',
             flow: 'medium', // default flow
             symptoms: [],
             notes: 'Initial period log'
         };
 
         // Auto-fill days between start and end
-        this.autoFillPeriodDays(startDateStr, endDateStr);
+        this.autoFillPeriodDaysWithDates(startDateStr, endDateStr);
 
         this.saveUserData();
         this.saveCycleData();
@@ -911,61 +911,6 @@ class CycleGarden {
         this.renderCalendar();
     }
 
-    renderCalendar() {
-        const year = this.calendarDate.getFullYear();
-        const month = this.calendarDate.getMonth();
-        
-        // Update month/year display
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                           'July', 'August', 'September', 'October', 'November', 'December'];
-        document.getElementById('current-month-year').textContent = 
-            `${monthNames[month]} ${year}`;
-        
-        // Get first day of month and number of days
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const daysInMonth = lastDay.getDate();
-        const startingDayOfWeek = firstDay.getDay();
-        
-        // Clear calendar
-        const calendarDays = document.getElementById('calendar-days');
-        calendarDays.innerHTML = '';
-        
-        // Add empty cells for days before month starts
-        for (let i = 0; i < startingDayOfWeek; i++) {
-            const emptyDay = document.createElement('div');
-            emptyDay.className = 'calendar-day other-month';
-            emptyDay.textContent = '';
-            calendarDays.appendChild(emptyDay);
-        }
-        
-        // Add days of the month
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dayElement = document.createElement('div');
-            dayElement.className = 'calendar-day';
-            dayElement.textContent = day;
-            
-            const currentDate = new Date(year, month, day);
-            const dateString = currentDate.toDateString();
-            
-            // Check if today
-            if (this.isSameDate(currentDate, this.currentDate)) {
-                dayElement.classList.add('today');
-            }
-            
-            // Check if has period data
-            if (this.periodData[dateString]) {
-                dayElement.classList.add('has-flow', this.periodData[dateString].flow);
-            }
-            
-            // Add click event
-            dayElement.addEventListener('click', () => {
-                this.openFlowModal(currentDate);
-            });
-            
-            calendarDays.appendChild(dayElement);
-        }
-    }
 
     isSameDate(date1, date2) {
         return date1.getDate() === date2.getDate() &&
@@ -1264,6 +1209,34 @@ class CycleGarden {
         }
         
         // If we have both start and end dates, fill the days between
+        if (startDate && endDate && startDate < endDate) {
+            const currentDate = new Date(startDate);
+            currentDate.setDate(currentDate.getDate() + 1); // Start from day after start
+            
+            while (currentDate < endDate) {
+                const dateString = currentDate.toDateString();
+                
+                // Only fill if the day doesn't already have data
+                if (!this.periodData[dateString]) {
+                    this.periodData[dateString] = {
+                        flow: 'medium', // Default flow for auto-filled days
+                        periodType: 'continue',
+                        symptoms: [],
+                        notes: 'Auto-filled period day',
+                        date: dateString
+                    };
+                }
+                
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+        }
+    }
+
+    // Auto-fill days between specific start and end dates (for onboarding)
+    autoFillPeriodDaysWithDates(startDateStr, endDateStr) {
+        const startDate = new Date(startDateStr);
+        const endDate = new Date(endDateStr);
+        
         if (startDate && endDate && startDate < endDate) {
             const currentDate = new Date(startDate);
             currentDate.setDate(currentDate.getDate() + 1); // Start from day after start
