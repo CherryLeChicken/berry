@@ -268,10 +268,10 @@ class CycleGarden {
             setupDate: new Date()
         };
 
-        // Save cycle data using the period start date with default 28-day cycle
+        // Save cycle data using the period start date with default 28-day cycle (average cycle length)
         this.cycleData = {
             lastPeriod: new Date(lastPeriodStart),
-            cycleLength: 28, // Default to 28 days
+            cycleLength: 28, // Average cycle length
             setupDate: new Date()
         };
 
@@ -409,7 +409,25 @@ class CycleGarden {
         
         if (this.datePickerMode === 'start') {
             document.getElementById('period-start-display').textContent = dateStr;
+            // Clear end date if it's before the new start date
+            const endDisplay = document.getElementById('period-end-display').textContent;
+            if (endDisplay !== 'Select date') {
+                const endDate = new Date(endDisplay);
+                if (endDate <= this.selectedDate) {
+                    document.getElementById('period-end-display').textContent = 'Select date';
+                    this.showNotification('Period end date must be after start date. Please reselect end date.', 'info');
+                }
+            }
         } else {
+            // Check if end date is after start date
+            const startDisplay = document.getElementById('period-start-display').textContent;
+            if (startDisplay !== 'Select date') {
+                const startDate = new Date(startDisplay);
+                if (this.selectedDate <= startDate) {
+                    this.showNotification('Period end date must be after start date', 'error');
+                    return;
+                }
+            }
             document.getElementById('period-end-display').textContent = dateStr;
         }
         
