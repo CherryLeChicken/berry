@@ -270,7 +270,7 @@ class CycleGarden {
 
         // Save cycle data using the period start date with default 28-day cycle (average cycle length)
         this.cycleData = {
-            lastPeriod: new Date(lastPeriodStart),
+            lastPeriod: startDate,
             cycleLength: 28, // Average cycle length
             setupDate: new Date()
         };
