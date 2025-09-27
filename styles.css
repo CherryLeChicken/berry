@@ -247,6 +247,72 @@ body::before {
     box-shadow: 0 0 0 3px rgba(160, 174, 192, 0.1);
 }
 
+/* Date Picker Styles */
+.date-picker-container {
+    position: relative;
+}
+
+.date-picker-btn {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    font-size: 1rem;
+    color: #4a5568;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.date-picker-btn:hover {
+    border-color: #a0aec0;
+    background: #f7fafc;
+}
+
+.date-picker-btn:focus {
+    outline: none;
+    border-color: #a0aec0;
+    box-shadow: 0 0 0 3px rgba(160, 174, 192, 0.1);
+}
+
+.calendar-icon {
+    font-size: 1.2rem;
+}
+
+.date-picker-calendar {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Date Picker Calendar Styles */
+#date-picker-days .calendar-day {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#date-picker-days .calendar-day:hover {
+    background: #e2e8f0;
+    border-radius: 8px;
+}
+
+#date-picker-days .calendar-day.selected {
+    background: #667eea;
+    color: white;
+    border-radius: 8px;
+}
+
+#date-picker-days .calendar-day.past-date {
+    opacity: 0.6;
+}
+
+#date-picker-days .calendar-day.today {
+    border: 2px solid #667eea;
+    border-radius: 8px;
+}
+
 .btn-primary {
     width: 100%;
     padding: 14px 24px;

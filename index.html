@@ -36,35 +36,23 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="last-period-start">When did your last period start?</label>
-                            <input type="date" id="last-period-start" required>
+                            <label>When did your last period start?</label>
+                            <div class="date-picker-container">
+                                <button type="button" id="select-period-start" class="date-picker-btn">
+                                    <span id="period-start-display">Select date</span>
+                                    <span class="calendar-icon">📅</span>
+                                </button>
+                            </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="last-period-end">When did your last period end?</label>
-                            <input type="date" id="last-period-end" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="cycle-length">Average cycle length (days):</label>
-                            <select id="cycle-length" required>
-                                <option value="">Select cycle length</option>
-                                <option value="21">21 days</option>
-                                <option value="22">22 days</option>
-                                <option value="23">23 days</option>
-                                <option value="24">24 days</option>
-                                <option value="25">25 days</option>
-                                <option value="26">26 days</option>
-                                <option value="27">27 days</option>
-                                <option value="28">28 days</option>
-                                <option value="29">29 days</option>
-                                <option value="30">30 days</option>
-                                <option value="31">31 days</option>
-                                <option value="32">32 days</option>
-                                <option value="33">33 days</option>
-                                <option value="34">34 days</option>
-                                <option value="35">35 days</option>
-                            </select>
+                            <label>When did your last period end?</label>
+                            <div class="date-picker-container">
+                                <button type="button" id="select-period-end" class="date-picker-btn">
+                                    <span id="period-end-display">Select date</span>
+                                    <span class="calendar-icon">📅</span>
+                                </button>
+                            </div>
                         </div>
                         
                         <button type="submit" class="btn-primary">Start Growing</button>
@@ -335,6 +323,43 @@
                             <button class="suggestion-btn" data-suggestion="How to boost my energy during ovulation?">Energy boost</button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Picker Calendar Modal -->
+        <div id="date-picker-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="date-picker-title">Select Date</h3>
+                    <button id="close-date-picker" class="close-btn">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="date-picker-calendar">
+                        <div class="calendar-controls">
+                            <button id="date-picker-prev" class="calendar-btn">‹</button>
+                            <h4 id="date-picker-month-year">Loading...</h4>
+                            <button id="date-picker-next" class="calendar-btn">›</button>
+                        </div>
+                        
+                        <div class="calendar-grid">
+                            <div class="calendar-weekdays">
+                                <div class="weekday">Sun</div>
+                                <div class="weekday">Mon</div>
+                                <div class="weekday">Tue</div>
+                                <div class="weekday">Wed</div>
+                                <div class="weekday">Thu</div>
+                                <div class="weekday">Fri</div>
+                                <div class="weekday">Sat</div>
+                            </div>
+                            <div id="date-picker-days" class="calendar-days">
+                                <!-- Calendar days will be generated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirm-date-selection" class="btn-primary">Select Date</button>
                 </div>
             </div>
         </div>

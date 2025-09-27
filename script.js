@@ -8,6 +8,8 @@ class CycleGarden {
         this.currentDate = new Date();
         this.calendarDate = new Date();
         this.selectedDate = null;
+        this.datePickerMode = null; // 'start' or 'end'
+        this.datePickerCalendarDate = new Date();
         
         this.initializeApp();
         this.setupEventListeners();
@@ -173,6 +175,32 @@ class CycleGarden {
             }
         });
 
+        // Date picker buttons
+        document.getElementById('select-period-start').addEventListener('click', () => {
+            this.openDatePicker('start');
+        });
+
+        document.getElementById('select-period-end').addEventListener('click', () => {
+            this.openDatePicker('end');
+        });
+
+        // Date picker modal
+        document.getElementById('close-date-picker').addEventListener('click', () => {
+            this.closeDatePicker();
+        });
+
+        document.getElementById('date-picker-prev').addEventListener('click', () => {
+            this.changeDatePickerMonth(-1);
+        });
+
+        document.getElementById('date-picker-next').addEventListener('click', () => {
+            this.changeDatePickerMonth(1);
+        });
+
+        document.getElementById('confirm-date-selection').addEventListener('click', () => {
+            this.confirmDateSelection();
+        });
+
         // Chatbot functionality
         document.getElementById('chatbot-toggle').addEventListener('click', () => {
             this.toggleChatbot();
@@ -217,18 +245,17 @@ class CycleGarden {
     // Cycle Setup
     handleCycleSetup() {
         const userName = document.getElementById('user-name').value.trim();
-        const lastPeriodStart = document.getElementById('last-period-start').value;
-        const lastPeriodEnd = document.getElementById('last-period-end').value;
-        const cycleLength = parseInt(document.getElementById('cycle-length').value);
+        const periodStartDisplay = document.getElementById('period-start-display').textContent;
+        const periodEndDisplay = document.getElementById('period-end-display').textContent;
 
-        if (!userName || !lastPeriodStart || !lastPeriodEnd || !cycleLength) {
+        if (!userName || periodStartDisplay === 'Select date' || periodEndDisplay === 'Select date') {
             this.showNotification('Please fill in all fields', 'error');
             return;
         }
 
-        // Validate that end date is after start date
-        const startDate = new Date(lastPeriodStart);
-        const endDate = new Date(lastPeriodEnd);
+        // Get the selected dates from the display values
+        const startDate = new Date(periodStartDisplay);
+        const endDate = new Date(periodEndDisplay);
         
         if (endDate <= startDate) {
             this.showNotification('Period end date must be after start date', 'error');
@@ -241,10 +268,10 @@ class CycleGarden {
             setupDate: new Date()
         };
 
-        // Save cycle data using the period start date
+        // Save cycle data using the period start date with default 28-day cycle
         this.cycleData = {
             lastPeriod: new Date(lastPeriodStart),
-            cycleLength: cycleLength,
+            cycleLength: 28, // Default to 28 days
             setupDate: new Date()
         };
 
@@ -278,6 +305,115 @@ class CycleGarden {
         this.showGardenScreen();
         this.updateGarden();
         this.showNotification(`Welcome to your garden, ${userName}! Your plant is ready to grow with you.`, 'success');
+    }
+
+    // Date Picker Methods
+    openDatePicker(mode) {
+        this.datePickerMode = mode;
+        this.datePickerCalendarDate = new Date();
+        this.selectedDate = null;
+        
+        const modal = document.getElementById('date-picker-modal');
+        const title = document.getElementById('date-picker-title');
+        
+        if (mode === 'start') {
+            title.textContent = 'Select Period Start Date';
+        } else {
+            title.textContent = 'Select Period End Date';
+        }
+        
+        modal.classList.remove('hidden');
+        this.renderDatePickerCalendar();
+    }
+
+    closeDatePicker() {
+        document.getElementById('date-picker-modal').classList.add('hidden');
+        this.datePickerMode = null;
+        this.selectedDate = null;
+    }
+
+    changeDatePickerMonth(direction) {
+        this.datePickerCalendarDate.setMonth(this.datePickerCalendarDate.getMonth() + direction);
+        this.renderDatePickerCalendar();
+    }
+
+    renderDatePickerCalendar() {
+        const year = this.datePickerCalendarDate.getFullYear();
+        const month = this.datePickerCalendarDate.getMonth();
+        
+        document.getElementById('date-picker-month-year').textContent = 
+            this.datePickerCalendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDayOfWeek = firstDay.getDay();
+        
+        const calendarDays = document.getElementById('date-picker-days');
+        calendarDays.innerHTML = '';
+        
+        // Add empty cells for days before the first day of the month
+        for (let i = 0; i < startingDayOfWeek; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'calendar-day empty';
+            calendarDays.appendChild(emptyDay);
+        }
+        
+        // Add days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            dayElement.textContent = day;
+            dayElement.dataset.day = day;
+            
+            const currentDate = new Date(year, month, day);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (currentDate < today) {
+                dayElement.classList.add('past-date');
+            } else if (currentDate.getTime() === today.getTime()) {
+                dayElement.classList.add('today');
+            }
+            
+            dayElement.addEventListener('click', () => {
+                this.selectDatePickerDay(dayElement, currentDate);
+            });
+            
+            calendarDays.appendChild(dayElement);
+        }
+    }
+
+    selectDatePickerDay(dayElement, date) {
+        // Remove previous selection
+        document.querySelectorAll('#date-picker-days .calendar-day.selected').forEach(el => {
+            el.classList.remove('selected');
+        });
+        
+        // Add selection to clicked day
+        dayElement.classList.add('selected');
+        this.selectedDate = date;
+    }
+
+    confirmDateSelection() {
+        if (!this.selectedDate) {
+            this.showNotification('Please select a date', 'error');
+            return;
+        }
+        
+        const dateStr = this.selectedDate.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        
+        if (this.datePickerMode === 'start') {
+            document.getElementById('period-start-display').textContent = dateStr;
+        } else {
+            document.getElementById('period-end-display').textContent = dateStr;
+        }
+        
+        this.closeDatePicker();
     }
 
     // Cycle Calculations
