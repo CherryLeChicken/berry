@@ -43,7 +43,7 @@
     right: 30px;
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
     color: white;
     border: none;
     border-radius: 50%;
@@ -52,14 +52,14 @@
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 25px rgba(104, 211, 145, 0.3);
     transition: all 0.3s ease;
     z-index: 1000;
 }
 
 .floating-chatbot-btn:hover {
     transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 12px 35px rgba(72, 187, 120, 0.4);
 }
 
 .chatbot-icon {
@@ -299,7 +299,7 @@ body::before {
 }
 
 #date-picker-days .calendar-day.selected {
-    background: #667eea;
+    background: #48bb78;
     color: white;
     border-radius: 8px;
 }
@@ -309,14 +309,14 @@ body::before {
 }
 
 #date-picker-days .calendar-day.today {
-    border: 2px solid #667eea;
+    border: 2px solid #48bb78;
     border-radius: 8px;
 }
 
 .btn-primary {
     width: 100%;
     padding: 14px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
     color: white;
     border: none;
     border-radius: 12px;
@@ -329,7 +329,7 @@ body::before {
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 25px rgba(104, 211, 145, 0.3);
 }
 
 /* Garden Screen */
@@ -395,7 +395,7 @@ body::before {
 }
 
 .help-icon:hover {
-    background: #667eea;
+    background: #48bb78;
     transform: scale(1.1);
 }
 
@@ -470,7 +470,7 @@ body::before {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(90deg, #68d391 0%, #48bb78 100%);
     border-radius: 4px;
     transition: width 0.5s ease;
 }
@@ -746,7 +746,7 @@ body::before {
 }
 
 .care-btn:hover {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(72, 187, 120, 0.1);
     border-color: #a0aec0;
     transform: translateY(-2px);
 }
@@ -789,14 +789,14 @@ body::before {
 }
 
 .mood-btn:hover {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(72, 187, 120, 0.1);
     border-color: #a0aec0;
 }
 
 .mood-btn.selected {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
     color: white;
-    border-color: #667eea;
+    border-color: #48bb78;
 }
 
 /* Garden Notes */
@@ -819,11 +819,11 @@ body::before {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
     color: white;
     padding: 15px 20px;
     border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 25px rgba(104, 211, 145, 0.3);
     z-index: 1000;
     transform: translateX(400px);
     transition: transform 0.3s ease;
@@ -904,9 +904,9 @@ body::before {
 
 .btn-secondary {
     padding: 8px 16px;
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-    border: 2px solid #667eea;
+    background: rgba(104, 211, 145, 0.1);
+    color: #48bb78;
+    border: 2px solid #48bb78;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -914,7 +914,7 @@ body::before {
 }
 
 .btn-secondary:hover {
-    background: #667eea;
+    background: #48bb78;
     color: white;
 }
 
@@ -930,9 +930,9 @@ body::before {
 }
 
 .calendar-btn {
-    background: rgba(102, 126, 234, 0.1);
-    border: 2px solid #667eea;
-    color: #667eea;
+    background: rgba(72, 187, 120, 0.1);
+    border: 2px solid #48bb78;
+    color: #48bb78;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -943,7 +943,7 @@ body::before {
 }
 
 .calendar-btn:hover {
-    background: #667eea;
+    background: #48bb78;
     color: white;
 }
 
@@ -1007,7 +1007,7 @@ body::before {
 }
 
 .calendar-day.today {
-    background: #667eea;
+    background: #48bb78;
     color: white;
     font-weight: 600;
 }
@@ -1206,14 +1206,14 @@ body::before {
 }
 
 .period-type-btn:hover {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(72, 187, 120, 0.1);
     border-color: #a0aec0;
 }
 
 .period-type-btn.selected {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
     color: white;
-    border-color: #667eea;
+    border-color: #48bb78;
 }
 
 .flow-buttons {
@@ -1242,17 +1242,17 @@ body::before {
 }
 
 .symptom-checkbox:hover {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(72, 187, 120, 0.1);
 }
 
 .symptom-checkbox input[type="checkbox"] {
     margin: 0;
-    accent-color: #667eea;
+    accent-color: #48bb78;
 }
 
 .symptom-checkbox input[type="checkbox"]:checked + span {
     font-weight: 600;
-    color: #667eea;
+    color: #48bb78;
 }
 
 .flow-btn {
@@ -1268,14 +1268,14 @@ body::before {
 }
 
 .flow-btn:hover {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(72, 187, 120, 0.1);
     border-color: #a0aec0;
 }
 
 .flow-btn.selected {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
     color: white;
-    border-color: #667eea;
+    border-color: #48bb78;
 }
 
 .flow-notes {
@@ -1366,7 +1366,7 @@ body::before {
 }
 
 .chatbot-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
     color: white;
     padding: 20px;
     display: flex;
@@ -1454,7 +1454,7 @@ body::before {
 }
 
 .user-message .message-content {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
     color: white;
     border-bottom-right-radius: 4px;
 }
@@ -1489,8 +1489,8 @@ body::before {
 }
 
 .chatbot-input:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #48bb78;
+    box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
 }
 
 .chatbot-send-btn {
@@ -1498,7 +1498,7 @@ body::before {
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
     color: white;
     border: none;
     border-radius: 50%;
@@ -1514,7 +1514,7 @@ body::before {
 
 .chatbot-send-btn:hover {
     transform: translateY(-50%) scale(1.05);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(104, 211, 145, 0.3);
 }
 
 .send-icon {
@@ -1529,9 +1529,9 @@ body::before {
 
 .suggestion-btn {
     padding: 6px 12px;
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-    border: 1px solid rgba(102, 126, 234, 0.2);
+    background: rgba(72, 187, 120, 0.1);
+    color: #48bb78;
+    border: 1px solid rgba(72, 187, 120, 0.2);
     border-radius: 15px;
     cursor: pointer;
     font-size: 0.8rem;
@@ -1539,7 +1539,7 @@ body::before {
 }
 
 .suggestion-btn:hover {
-    background: rgba(102, 126, 234, 0.2);
+    background: rgba(72, 187, 120, 0.2);
     transform: translateY(-1px);
 }
 
