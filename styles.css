@@ -654,6 +654,10 @@ body {
 }
 
 .stat {
+    padding: 20px;
+    background-color: #4cbd75;
+    border-radius: 10px;
+    min-width: 153px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -662,13 +666,13 @@ body {
 
 .stat-label {
     font-size: 0.9rem;
-    color: #718096;
+    color: #ffffff;
 }
 
 .stat-value {
     font-size: 1.2rem;
     font-weight: 600;
-    color: #2d3748;
+    color: #ffffff;
 }
 
 /* Self-Care Section */
@@ -722,8 +726,15 @@ body {
     text-align: center;
 }
 
+.mood-phase-divider {
+    margin: 32px auto;
+    border: none;
+    border-top: 2px solid #f472b6;
+    width: 60%;
+}
+
 .mood-logging h4 {
-    color: #4a5568;
+    color: #462005;
     margin-bottom: 15px;
     font-size: 1.1rem;
 }
@@ -746,14 +757,14 @@ body {
 }
 
 .mood-btn:hover {
-    background: rgba(72, 187, 120, 0.1);
-    border-color: #a0aec0;
+    background: #FFB3C9;
+    border-color: #F65583;
 }
 
 .mood-btn.selected {
-    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
+    background: linear-gradient(135deg, #ef8ea9 0%, #f7608b 100%);
     color: white;
-    border-color: #48bb78;
+    border-color: #F65583;
 }
 
 /* Other mood container */
