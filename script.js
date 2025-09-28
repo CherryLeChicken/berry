@@ -1,3 +1,4 @@
+import 'dotenv/config';
 
 // Cycle Garden - Main Application Logic
 class CycleGarden {
@@ -1417,6 +1418,7 @@ class CycleGarden {
         }
     }
 
+    
     async sendToGemini(message) {
         try {
             // Get API key
