@@ -1,3 +1,4 @@
+
 // Cycle Garden - Main Application Logic
 class CycleGarden {
     constructor() {
@@ -552,11 +553,24 @@ class CycleGarden {
     updatePlantAppearance() {
         const phase = this.getCurrentPhase();
         const plant = document.getElementById('plant');
+        const plantImage = document.getElementById('plant-image');
         const weatherEffects = document.getElementById('weather-effects');
         
         // Remove all phase classes
         plant.className = 'plant';
         plant.classList.add(phase);
+        
+        // Update plant image based on phase
+        const phaseImages = {
+            menstrual: 'assets/img/pot.png',
+            follicular: 'assets/img/sprout.png',
+            ovulation: 'assets/img/plant.png',
+            luteal: 'assets/img/fruit.png'
+        };
+        
+        if (phaseImages[phase]) {
+            plantImage.src = phaseImages[phase];
+        }
         
         // Update weather effects based on phase
         const rain = weatherEffects.querySelector('.rain');
@@ -599,20 +613,20 @@ class CycleGarden {
     getPhaseInfo(phase) {
         const phaseInfo = {
             menstrual: {
-                name: 'Resting Willow',
-                description: 'Your plant is resting and conserving energy, just like you during your menstrual phase.'
+                name: 'Resting Pot',
+                description: 'Your plant is in its rest and reset stage, conserving energy for new growth.'
             },
             follicular: {
                 name: 'Growing Sprout',
-                description: 'New growth is emerging as your plant prepares for a new cycle of growth.'
+                description: 'New buds and shoots are emerging as your plant begins its growth journey.'
             },
             ovulation: {
-                name: 'Blooming Rose',
-                description: 'Your plant is in full bloom, radiating energy and vitality.'
+                name: 'Vibrant Plant',
+                description: 'Your plant is at peak vitality with full, lush leaves and maximum energy.'
             },
             luteal: {
-                name: 'Fruitful Tree',
-                description: 'Your plant is bearing fruit and preparing for the next cycle.'
+                name: 'Fruitful Plant',
+                description: 'Your plant is ripening and preparing, bearing the fruits of its growth cycle.'
             }
         };
         
@@ -1405,8 +1419,9 @@ class CycleGarden {
 
     async sendToGemini(message) {
         try {
-            // Check if CONFIG is available
-            if (!window.CONFIG || !window.CONFIG.GEMINI_API_KEY) {
+            // Get API key
+            const apiKey = this.getApiKey();
+            if (!apiKey) {
                 throw new Error('API key not configured');
             }
 
@@ -1438,9 +1453,9 @@ Guidelines:
 Respond to the user's question: "${message}"`;
 
             console.log('Sending request to Gemini API...');
-            console.log('API Key:', window.CONFIG.GEMINI_API_KEY ? 'Present' : 'Missing');
+            console.log('API Key:', apiKey ? 'Present' : 'Missing');
 
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${window.CONFIG.GEMINI_API_KEY}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1502,19 +1517,34 @@ Respond to the user's question: "${message}"`;
         }
     }
 
+    // Get API key from environment or config
+    getApiKey() {
+        // Check for environment variable first (for production)
+        if (typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY) {
+            return process.env.GEMINI_API_KEY;
+        }
+        
+        // Fall back to config.js (for development)
+        if (typeof window !== 'undefined' && window.CONFIG && window.CONFIG.GEMINI_API_KEY) {
+            return window.CONFIG.GEMINI_API_KEY;
+        }
+        
+        return null;
+    }
+
     // Test API connection
     async testApiConnection() {
         console.log('Testing API connection...');
-        console.log('CONFIG available:', !!window.CONFIG);
-        console.log('API Key available:', !!window.CONFIG?.GEMINI_API_KEY);
+        const apiKey = this.getApiKey();
+        console.log('API Key available:', !!apiKey);
         
-        if (!window.CONFIG || !window.CONFIG.GEMINI_API_KEY) {
-            console.error('API key not found in CONFIG');
+        if (!apiKey) {
+            console.error('API key not found in environment or CONFIG');
             return;
         }
         
         try {
-            const testResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${window.CONFIG.GEMINI_API_KEY}`, {
+            const testResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
