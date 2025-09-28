@@ -1,6 +1,16 @@
 {
+  "name": "berry-cycle-garden",
+  "version": "1.0.0",
+  "description": "A menstrual cycle tracking app with AI chatbot",
+  "scripts": {
+    "start": "http-server -p 8000",
+    "dev": "http-server -p 8000 -o"
+  },
   "dependencies": {
     "@google/genai": "^1.21.0",
     "dotenv": "^17.2.2"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
   }
 }

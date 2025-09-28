@@ -1454,6 +1454,7 @@ Respond to the user's question: "${message}"`;
 
             console.log('Sending request to Gemini API...');
             console.log('API Key:', apiKey ? 'Present' : 'Missing');
+            console.log('Request URL:', `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey.substring(0, 10)}...`);
 
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
                 method: 'POST',
