@@ -1,4 +1,7 @@
-import 'dotenv/config';
+
+//require('dotenv').config();
+
+//const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 // Cycle Garden - Main Application Logic
 class CycleGarden {
@@ -261,6 +264,14 @@ class CycleGarden {
         // Test API connection on chatbot open
         document.getElementById('chatbot-toggle').addEventListener('click', () => {
             this.testApiConnection();
+        });
+
+        // Plant confetti effect
+        document.getElementById('plant').addEventListener('click', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX;
+            const y = e.clientY;
+            this.createConfetti(x, y);
         });
     }
 
@@ -548,6 +559,44 @@ class CycleGarden {
         
         const cycleDay = this.getCurrentCycleDay();
         return this.cycleData.cycleLength - cycleDay + 1;
+    }
+
+    // Confetti Effect
+    createConfetti(x, y) {
+        const confettiContainer = document.createElement('div');
+        confettiContainer.className = 'confetti';
+        confettiContainer.style.left = x + 'px';
+        confettiContainer.style.top = y + 'px';
+        
+        // Create multiple confetti particles
+        const particleCount = 15;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'confetti-particle';
+            
+            // Randomize position around click point
+            const angle = (Math.PI * 2 * i) / particleCount;
+            const distance = 20 + Math.random() * 30;
+            const particleX = Math.cos(angle) * distance;
+            const particleY = Math.sin(angle) * distance;
+            
+            particle.style.left = particleX + 'px';
+            particle.style.top = particleY + 'px';
+            
+            // Randomize animation delay
+            particle.style.animationDelay = Math.random() * 0.5 + 's';
+            
+            confettiContainer.appendChild(particle);
+        }
+        
+        document.body.appendChild(confettiContainer);
+        
+        // Remove confetti after animation
+        setTimeout(() => {
+            if (confettiContainer.parentNode) {
+                confettiContainer.parentNode.removeChild(confettiContainer);
+            }
+        }, 2500);
     }
 
     // Plant Management
@@ -1339,6 +1388,7 @@ class CycleGarden {
             }
         }
     }
+    
 
     // Chatbot Functionality
     toggleChatbot() {
@@ -1456,9 +1506,11 @@ Respond to the user's question: "${message}"`;
 
             console.log('Sending request to Gemini API...');
             console.log('API Key:', apiKey ? 'Present' : 'Missing');
-            console.log('Request URL:', `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey.substring(0, 10)}...`);
-
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+            
+            // Use the discovered model or fallback to a known working model
+            const modelName = this.availableModel || 'models/gemini-1.5-flash';
+            console.log('Request URL:', `https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${apiKey.substring(0, 10)}...`);
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1480,10 +1532,17 @@ Respond to the user's question: "${message}"`;
 
             console.log('Response status:', response.status);
             console.log('Response ok:', response.ok);
+            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('API Error Response:', errorText);
+                console.error('Full error details:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    url: response.url,
+                    headers: Object.fromEntries(response.headers.entries())
+                });
                 throw new Error(`API request failed: ${response.status} ${response.statusText}`);
             }
 
@@ -1522,16 +1581,25 @@ Respond to the user's question: "${message}"`;
 
     // Get API key from environment or config
     getApiKey() {
+        console.log('Checking for API key...');
+        console.log('process available:', typeof process !== 'undefined');
+        console.log('window available:', typeof window !== 'undefined');
+        console.log('window.CONFIG available:', typeof window !== 'undefined' && window.CONFIG);
+        console.log('window.CONFIG.GEMINI_API_KEY available:', typeof window !== 'undefined' && window.CONFIG && window.CONFIG.GEMINI_API_KEY);
+        
         // Check for environment variable first (for production)
         if (typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY) {
+            console.log('Using environment variable API key');
             return process.env.GEMINI_API_KEY;
         }
         
         // Fall back to config.js (for development)
         if (typeof window !== 'undefined' && window.CONFIG && window.CONFIG.GEMINI_API_KEY) {
+            console.log('Using config.js API key');
             return window.CONFIG.GEMINI_API_KEY;
         }
         
+        console.log('No API key found');
         return null;
     }
 
@@ -1547,26 +1615,25 @@ Respond to the user's question: "${message}"`;
         }
         
         try {
-            const testResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: "Hello, this is a test message."
-                        }]
-                    }]
-                })
-            });
+            // First, let's check what models are available
+            console.log('Checking available models...');
+            const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+            const modelsData = await modelsResponse.json();
+            console.log('Available models:', modelsData);
             
-            console.log('Test response status:', testResponse.status);
-            if (testResponse.ok) {
-                console.log('✅ API connection successful!');
+            // Find a model that supports generateContent
+            const availableModel = modelsData.models?.find(model => 
+                model.supportedGenerationMethods?.includes('generateContent')
+            );
+            
+            if (availableModel) {
+                console.log('Found available model:', availableModel.name);
+                // Update the model name for future use
+                this.availableModel = availableModel.name;
             } else {
-                console.error('❌ API connection failed:', testResponse.status);
+                console.error('No models found that support generateContent');
             }
+            
         } catch (error) {
             console.error('❌ API test failed:', error);
         }
@@ -1575,6 +1642,10 @@ Respond to the user's question: "${message}"`;
 
 // Initialize the app when the page loads
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, checking config...');
+    console.log('window.CONFIG available:', typeof window.CONFIG !== 'undefined');
+    console.log('window.CONFIG.GEMINI_API_KEY available:', typeof window.CONFIG !== 'undefined' && window.CONFIG.GEMINI_API_KEY);
+    
     new CycleGarden();
 });
 

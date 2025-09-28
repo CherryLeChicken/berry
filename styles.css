@@ -494,6 +494,15 @@ body {
     align-items: center;
     height: 200px;
     transition: all 0.5s ease;
+    cursor: pointer;
+}
+
+.plant:hover {
+    transform: scale(1.05);
+}
+
+.plant:active {
+    transform: scale(0.95);
 }
 
 .plant-image {
@@ -503,6 +512,46 @@ body {
     height: auto;
     transition: all 0.5s ease;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+/* Confetti Styles */
+.confetti {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.confetti-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: linear-gradient(45deg, #68d391, #48bb78, #38a169);
+    border-radius: 50%;
+    animation: confetti-fall 2s ease-out forwards;
+}
+
+.confetti-particle:nth-child(odd) {
+    background: linear-gradient(45deg, #48bb78, #38a169, #2f855a);
+    width: 6px;
+    height: 6px;
+}
+
+.confetti-particle:nth-child(3n) {
+    background: linear-gradient(45deg, #68d391, #9ae6b4, #48bb78);
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(200px) rotate(720deg);
+        opacity: 0;
+    }
 }
 
 /* Plant Phase Styles */
@@ -1045,7 +1094,7 @@ body {
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     z-index: 1000;
 }
@@ -1054,16 +1103,23 @@ body {
     display: none;
 }
 
+.modal:not(.hidden) .modal-content {
+    transform: translateY(0);
+}
+
 .modal-content {
     background: white;
-    border-radius: 15px;
-    width: 90%;
+    border-radius: 20px 20px 0 0;
+    width: 100%;
     max-width: 500px;
     max-height: 85vh;
     overflow-y: auto;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
+    margin-bottom: 0;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
 }
 
 .modal-header {
@@ -1632,9 +1688,10 @@ body {
     }
     
     .modal-content {
-        width: 95%;
-        margin: 10px;
+        width: 100%;
+        margin: 0;
         max-height: 90vh;
+        border-radius: 20px 20px 0 0;
     }
     
     .modal-body {
@@ -1653,9 +1710,10 @@ body {
     }
     
     .modal-content {
-        width: 98%;
-        margin: 5px;
+        width: 100%;
+        margin: 0;
         max-height: 95vh;
+        border-radius: 20px 20px 0 0;
     }
     
     .symptoms-grid {
