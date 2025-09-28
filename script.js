@@ -602,41 +602,6 @@ class CycleGarden {
         };
         
         // General responses based on keywords
-        if (lowerMessage.includes('period') || lowerMessage.includes('menstrual') || lowerMessage.includes('cramps')) {
-            return cycleResponses.menstrual[Math.floor(Math.random() * cycleResponses.menstrual.length)];
-        }
-        
-        if (lowerMessage.includes('energy') || lowerMessage.includes('tired') || lowerMessage.includes('fatigue')) {
-            if (currentPhase === 'menstrual') {
-                return "It's completely normal to feel low energy during your period. Rest is not a luxury - it's a necessity. Your body is working hard! 🌸";
-            } else if (currentPhase === 'ovulation') {
-                return "You're in your peak energy phase! If you're feeling tired, make sure you're getting enough sleep and eating well. Your body needs fuel for this high-energy time! ⚡";
-            } else {
-                return "Energy levels naturally fluctuate throughout your cycle. Listen to your body and give it what it needs - whether that's rest, movement, or nourishment. 💚";
-            }
-        }
-        
-        if (lowerMessage.includes('mood') || lowerMessage.includes('emotional') || lowerMessage.includes('feelings')) {
-            return "Your emotions are valid and often connected to your cycle. During different phases, you might feel more sensitive or confident - this is completely normal. Be gentle with yourself. 💚";
-        }
-        
-        if (lowerMessage.includes('food') || lowerMessage.includes('eat') || lowerMessage.includes('nutrition')) {
-            return "Eating well throughout your cycle is so important! Focus on whole foods, plenty of water, and listen to what your body craves. Different phases might call for different nutrients. 🥗";
-        }
-        
-        if (lowerMessage.includes('exercise') || lowerMessage.includes('workout') || lowerMessage.includes('fitness')) {
-            if (currentPhase === 'menstrual') {
-                return "Gentle movement like walking, yoga, or stretching can be perfect during your period. Listen to your body - some days rest is the best exercise. 🧘‍♀️";
-            } else if (currentPhase === 'ovulation') {
-                return "This is a great time for more intense workouts! Your energy is at its peak, so take advantage of it. Just remember to stay hydrated! 💪";
-            } else {
-                return "Movement is wonderful for your cycle! Adjust intensity based on how you feel - some days call for gentle yoga, others for more vigorous exercise. 🌿";
-            }
-        }
-        
-        if (lowerMessage.includes('self care') || lowerMessage.includes('self-care') || lowerMessage.includes('care')) {
-            return "Self-care looks different for everyone and changes throughout your cycle. Whether it's a bath, meditation, or time with loved ones - do what feels right for you right now. 💚";
-        }
         
         if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
             return `Hello! I'm here to support you through your ${currentPhase} phase. How are you feeling today? Remember, you're doing amazing! 🌱`;
@@ -673,29 +638,6 @@ class CycleGarden {
         }
         
         // Check for common keywords that have good hardcoded responses
-        if (lowerMessage.includes('period') || lowerMessage.includes('menstrual') || lowerMessage.includes('cramps')) {
-            return this.getFallbackResponse(message);
-        }
-        
-        if (lowerMessage.includes('energy') || lowerMessage.includes('tired') || lowerMessage.includes('fatigue')) {
-            return this.getFallbackResponse(message);
-        }
-        
-        if (lowerMessage.includes('mood') || lowerMessage.includes('emotional') || lowerMessage.includes('feelings')) {
-            return this.getFallbackResponse(message);
-        }
-        
-        if (lowerMessage.includes('food') || lowerMessage.includes('eat') || lowerMessage.includes('nutrition')) {
-            return this.getFallbackResponse(message);
-        }
-        
-        if (lowerMessage.includes('exercise') || lowerMessage.includes('workout') || lowerMessage.includes('fitness')) {
-            return this.getFallbackResponse(message);
-        }
-        
-        if (lowerMessage.includes('self care') || lowerMessage.includes('self-care') || lowerMessage.includes('care')) {
-            return this.getFallbackResponse(message);
-        }
         
         if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
             return this.getFallbackResponse(message);
@@ -1899,23 +1841,23 @@ Respond to the user's question: "${message}"`;
                 
                 // Use fallback response instead of just error message
                 const fallbackResponse = this.getFallbackResponse(message);
-                errorMessage = `I'm taking a short break from AI responses, but I still want to help! 🌱\n\n${fallbackResponse}\n\n*I'll be back with full AI responses in ${waitTime} seconds.*`;
+                errorMessage = `I'm taking a short break from AI responses, I'll be back with full AI responses in ${waitTime} seconds.`;
             } else if (error.message.includes('API key not configured')) {
                 // Use fallback when API key is missing
                 const fallbackResponse = this.getFallbackResponse(message);
-                errorMessage = `I'm using my built-in responses right now! 🌱\n\n${fallbackResponse}\n\n*Note: AI responses are currently unavailable, but I'm still here to help!*`;
+                errorMessage = `I'm using my built-in responses right now! *Note: AI responses are currently unavailable*`;
             } else if (error.message.includes('Failed to fetch')) {
                 // Use fallback when network fails
                 const fallbackResponse = this.getFallbackResponse(message);
-                errorMessage = `I'm using my offline responses! 🌱\n\n${fallbackResponse}\n\n*Note: I'm working offline right now, but I'm still here to support you!*`;
+                errorMessage = `I'm using my offline responses! \n*Note: I'm working offline right now, I'll be back soon!*`;
             } else if (error.message.includes('API request failed')) {
                 // Use fallback for other API errors
                 const fallbackResponse = this.getFallbackResponse(message);
-                errorMessage = `I'm using my backup responses! 🌱\n\n${fallbackResponse}\n\n*Note: AI responses are temporarily unavailable, but I'm still here to help!*`;
+                errorMessage = `I'm using my backup responses! \n*Note: AI responses are temporarily unavailable, please try again later.*`;
             } else {
                 // Use fallback for any other errors
                 const fallbackResponse = this.getFallbackResponse(message);
-                errorMessage = `I'm using my built-in responses! 🌱\n\n${fallbackResponse}\n\n*Note: I'm working with my backup responses right now, but I'm still here to support you!*`;
+                errorMessage = `I'm using my built-in responses! 🌱 *Note: I'm working with my backup responses right now.*`;
             }
             
             this.addChatMessage(errorMessage, 'bot');
