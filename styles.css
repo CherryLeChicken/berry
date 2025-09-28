@@ -1517,6 +1517,17 @@ body {
     box-shadow: 0 4px 15px rgba(104, 211, 145, 0.3);
 }
 
+.chatbot-send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: translateY(-50%);
+}
+
+.chatbot-send-btn:disabled:hover {
+    transform: translateY(-50%);
+    box-shadow: none;
+}
+
 .send-icon {
     font-size: 1rem;
 }

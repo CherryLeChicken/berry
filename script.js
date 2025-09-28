@@ -16,6 +16,11 @@ class CycleGarden {
         this.datePickerMode = null; // 'start' or 'end'
         this.datePickerCalendarDate = new Date();
         
+        // Rate limiting
+        this.lastApiCall = 0;
+        this.apiCallCount = 0;
+        this.rateLimitResetTime = 0;
+        
         this.initializeApp();
         this.setupEventListeners();
         this.startIdleGrowth();
@@ -249,7 +254,12 @@ class CycleGarden {
         document.querySelectorAll('.suggestion-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const suggestion = e.target.dataset.suggestion;
-                document.getElementById('chatbot-input').value = suggestion;
+                
+                // Simulate typing the suggestion in the input
+                const input = document.getElementById('chatbot-input');
+                input.value = suggestion;
+                
+                // Trigger the normal message flow (which will check for hardcoded responses)
                 this.sendChatMessage();
             });
         });
@@ -559,6 +569,206 @@ class CycleGarden {
         
         const cycleDay = this.getCurrentCycleDay();
         return this.cycleData.cycleLength - cycleDay + 1;
+    }
+
+    // Fallback Chatbot Responses
+    getFallbackResponse(message) {
+        const currentPhase = this.getCurrentPhase();
+        const cycleDay = this.getCurrentCycleDay();
+        const lowerMessage = message.toLowerCase();
+        
+        // Cycle-specific responses
+        const cycleResponses = {
+            menstrual: [
+                "During your menstrual phase, it's important to rest and be gentle with yourself. Try warm baths, gentle yoga, or curling up with a good book. Your body is doing important work! 🌸",
+                "This is your rest and reset phase. Listen to your body - if you need extra sleep or comfort foods, that's perfectly okay. You're exactly where you need to be. 💚",
+                "Your menstrual phase is a time for self-compassion. Consider light stretching, herbal teas, or simply taking it easy. Your plant is resting too, just like you should. 🌱"
+            ],
+            follicular: [
+                "You're in your follicular phase - a time of new beginnings and growing energy! This is perfect for starting new projects or trying new activities. Your plant is sprouting new growth too! 🌱",
+                "Your energy is building during this phase. It's a great time for planning, learning, and taking on new challenges. You've got this! ✨",
+                "The follicular phase is all about growth and possibility. Your body is preparing for ovulation, so fuel it well with nutritious foods and gentle movement. 🌿"
+            ],
+            ovulation: [
+                "You're at your peak during ovulation! This is when you might feel most confident and energetic. It's a great time for important conversations or tackling big projects. You're glowing! ✨",
+                "Your ovulation phase is your power time! You're likely feeling your most social and energetic. Use this energy wisely - you're unstoppable right now! 💪",
+                "This is your peak vitality phase! Your plant is in full bloom, just like your energy. It's the perfect time for social activities and taking on challenges. 🌸"
+            ],
+            luteal: [
+                "You're in your luteal phase - a time for reflection and preparation. You might feel more introspective now, which is completely normal. Your plant is bearing fruit, just like you're processing your experiences. 🍃",
+                "The luteal phase can bring more sensitivity and introspection. This is a great time for journaling, gentle self-care, and preparing for your next cycle. You're doing beautifully. 💚",
+                "During your luteal phase, you might crave more alone time or comfort. That's your body's wisdom! Listen to what it needs - rest, warmth, and gentle care. 🌿"
+            ]
+        };
+        
+        // General responses based on keywords
+        if (lowerMessage.includes('period') || lowerMessage.includes('menstrual') || lowerMessage.includes('cramps')) {
+            return cycleResponses.menstrual[Math.floor(Math.random() * cycleResponses.menstrual.length)];
+        }
+        
+        if (lowerMessage.includes('energy') || lowerMessage.includes('tired') || lowerMessage.includes('fatigue')) {
+            if (currentPhase === 'menstrual') {
+                return "It's completely normal to feel low energy during your period. Rest is not a luxury - it's a necessity. Your body is working hard! 🌸";
+            } else if (currentPhase === 'ovulation') {
+                return "You're in your peak energy phase! If you're feeling tired, make sure you're getting enough sleep and eating well. Your body needs fuel for this high-energy time! ⚡";
+            } else {
+                return "Energy levels naturally fluctuate throughout your cycle. Listen to your body and give it what it needs - whether that's rest, movement, or nourishment. 💚";
+            }
+        }
+        
+        if (lowerMessage.includes('mood') || lowerMessage.includes('emotional') || lowerMessage.includes('feelings')) {
+            return "Your emotions are valid and often connected to your cycle. During different phases, you might feel more sensitive or confident - this is completely normal. Be gentle with yourself. 💚";
+        }
+        
+        if (lowerMessage.includes('food') || lowerMessage.includes('eat') || lowerMessage.includes('nutrition')) {
+            return "Eating well throughout your cycle is so important! Focus on whole foods, plenty of water, and listen to what your body craves. Different phases might call for different nutrients. 🥗";
+        }
+        
+        if (lowerMessage.includes('exercise') || lowerMessage.includes('workout') || lowerMessage.includes('fitness')) {
+            if (currentPhase === 'menstrual') {
+                return "Gentle movement like walking, yoga, or stretching can be perfect during your period. Listen to your body - some days rest is the best exercise. 🧘‍♀️";
+            } else if (currentPhase === 'ovulation') {
+                return "This is a great time for more intense workouts! Your energy is at its peak, so take advantage of it. Just remember to stay hydrated! 💪";
+            } else {
+                return "Movement is wonderful for your cycle! Adjust intensity based on how you feel - some days call for gentle yoga, others for more vigorous exercise. 🌿";
+            }
+        }
+        
+        if (lowerMessage.includes('self care') || lowerMessage.includes('self-care') || lowerMessage.includes('care')) {
+            return "Self-care looks different for everyone and changes throughout your cycle. Whether it's a bath, meditation, or time with loved ones - do what feels right for you right now. 💚";
+        }
+        
+        if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+            return `Hello! I'm here to support you through your ${currentPhase} phase. How are you feeling today? Remember, you're doing amazing! 🌱`;
+        }
+        
+        if (lowerMessage.includes('help') || lowerMessage.includes('support')) {
+            return "I'm here to support you! I can help with cycle-related questions, self-care tips, and just being a listening ear. What's on your mind? 💚";
+        }
+        
+        // Default responses based on current phase
+        return cycleResponses[currentPhase][Math.floor(Math.random() * cycleResponses[currentPhase].length)];
+    }
+
+    // Check if message has a hardcoded response
+    getHardcodedResponse(message) {
+        const lowerMessage = message.toLowerCase();
+        
+        // Check for suggestion button messages
+        const suggestionResponses = {
+            "What should I eat during my period?": this.getSuggestionResponse("What should I eat during my period?"),
+            "How can I manage cramps naturally?": this.getSuggestionResponse("How can I manage cramps naturally?"),
+            "Self-care tips for the luteal phase": this.getSuggestionResponse("Self-care tips for the luteal phase"),
+            "How to boost my energy during ovulation?": this.getSuggestionResponse("How to boost my energy during ovulation?")
+        };
+        
+        // Check for exact matches first
+        if (suggestionResponses[message]) {
+            return suggestionResponses[message];
+        }
+        
+        // Check for demo/fallback commands
+        if (lowerMessage === 'demo' || lowerMessage === 'fallback') {
+            return null; // These are handled separately
+        }
+        
+        // Check for common keywords that have good hardcoded responses
+        if (lowerMessage.includes('period') || lowerMessage.includes('menstrual') || lowerMessage.includes('cramps')) {
+            return this.getFallbackResponse(message);
+        }
+        
+        if (lowerMessage.includes('energy') || lowerMessage.includes('tired') || lowerMessage.includes('fatigue')) {
+            return this.getFallbackResponse(message);
+        }
+        
+        if (lowerMessage.includes('mood') || lowerMessage.includes('emotional') || lowerMessage.includes('feelings')) {
+            return this.getFallbackResponse(message);
+        }
+        
+        if (lowerMessage.includes('food') || lowerMessage.includes('eat') || lowerMessage.includes('nutrition')) {
+            return this.getFallbackResponse(message);
+        }
+        
+        if (lowerMessage.includes('exercise') || lowerMessage.includes('workout') || lowerMessage.includes('fitness')) {
+            return this.getFallbackResponse(message);
+        }
+        
+        if (lowerMessage.includes('self care') || lowerMessage.includes('self-care') || lowerMessage.includes('care')) {
+            return this.getFallbackResponse(message);
+        }
+        
+        if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+            return this.getFallbackResponse(message);
+        }
+        
+        if (lowerMessage.includes('help') || lowerMessage.includes('support')) {
+            return this.getFallbackResponse(message);
+        }
+        
+        // No hardcoded response found
+        return null;
+    }
+
+    // Specific responses for suggestion buttons
+    getSuggestionResponse(suggestion) {
+        const currentPhase = this.getCurrentPhase();
+        
+        const suggestionResponses = {
+            "What should I eat during my period?": {
+                title: "Period Nutrition Tips 🥗",
+                content: `During your menstrual phase, focus on foods that support your body's needs:\n\n` +
+                `• **Iron-rich foods**: Spinach, lentils, lean meats to replenish iron lost during bleeding\n` +
+                `• **Magnesium**: Dark chocolate, nuts, bananas to help with cramps\n` +
+                `• **Omega-3s**: Salmon, walnuts, flaxseeds for anti-inflammatory benefits\n` +
+                `• **Warm foods**: Soups, herbal teas, warm meals to comfort your body\n` +
+                `• **Hydration**: Extra water and herbal teas to stay hydrated\n\n` +
+                `Avoid excessive caffeine, alcohol, and processed foods that can worsen cramps. Listen to your body's cravings - they often signal what nutrients you need! 💚`
+            },
+            "How can I manage cramps naturally?": {
+                title: "Natural Cramp Relief 🌿",
+                content: `Here are gentle, natural ways to ease menstrual cramps:\n\n` +
+                `• **Heat therapy**: Heating pad, warm bath, or hot water bottle on your lower abdomen\n` +
+                `• **Gentle movement**: Walking, light yoga, or stretching to increase blood flow\n` +
+                `• **Herbal teas**: Chamomile, ginger, or peppermint tea for natural pain relief\n` +
+                `• **Massage**: Gentle circular motions on your lower abdomen\n` +
+                `• **Breathing exercises**: Deep belly breathing to relax tense muscles\n` +
+                `• **Essential oils**: Lavender or clary sage (diluted) for aromatherapy\n` +
+                `• **Magnesium**: Epsom salt baths or magnesium supplements\n\n` +
+                `Remember: Your body is working hard during this phase. Be patient and gentle with yourself! 🌸`
+            },
+            "Self-care tips for the luteal phase": {
+                title: "Luteal Phase Self-Care 💚",
+                content: `The luteal phase is your reflection and preparation time. Here's how to care for yourself:\n\n` +
+                `• **Gentle movement**: Yoga, walking, or light stretching to support your changing energy\n` +
+                `• **Journaling**: Reflect on your experiences and emotions from this cycle\n` +
+                `• **Warm foods**: Nourishing soups, stews, and herbal teas to comfort your body\n` +
+                `• **Rest**: Extra sleep and downtime as your energy naturally decreases\n` +
+                `• **Creativity**: Art, music, or writing to process your thoughts and feelings\n` +
+                `• **Social boundaries**: It's okay to say no to draining activities\n` +
+                `• **Preparation**: Organize your space and plan for your next cycle\n\n` +
+                `This phase is about honoring your need for introspection and gentle care. You're exactly where you need to be! 🍃`
+            },
+            "How to boost my energy during ovulation?": {
+                title: "Ovulation Energy Boost ⚡",
+                content: `You're in your peak energy phase! Here's how to make the most of it:\n\n` +
+                `• **Nutrient-dense foods**: Lean proteins, complex carbs, and plenty of fruits and vegetables\n` +
+                `• **Hydration**: Extra water to support your body's increased activity\n` +
+                `• **Exercise**: Take advantage of your peak energy with more intense workouts\n` +
+                `• **Social activities**: This is a great time for networking, dates, or social events\n` +
+                `• **Important tasks**: Tackle challenging projects or have important conversations\n` +
+                `• **Sunlight**: Get natural light exposure to support your circadian rhythm\n` +
+                `• **Quality sleep**: Even with high energy, maintain good sleep hygiene\n\n` +
+                `Your body is at its most confident and energetic - use this power wisely! You're unstoppable right now! ✨`
+            }
+        };
+        
+        const response = suggestionResponses[suggestion];
+        if (response) {
+            return `**${response.title}**\n\n${response.content}`;
+        }
+        
+        // Fallback to general response if suggestion not found
+        return this.getFallbackResponse(suggestion);
     }
 
     // Confetti Effect
@@ -1414,19 +1624,75 @@ class CycleGarden {
 
     sendChatMessage() {
         const input = document.getElementById('chatbot-input');
+        const sendButton = document.getElementById('chatbot-send');
         const message = input.value.trim();
         
         if (!message) return;
+        
+        // Check for demo mode (type "demo" to test fallback responses)
+        if (message.toLowerCase() === 'demo') {
+            this.addChatMessage("Switching to demo mode! I'll use my built-in responses instead of AI. Try asking me about your cycle, energy, mood, or self-care! 🌱", 'bot');
+            return;
+        }
+        
+        // Check for fallback mode (type "fallback" to force fallback responses)
+        if (message.toLowerCase() === 'fallback') {
+            this.addChatMessage("Using fallback mode! I'll use my built-in responses for the next message. Try asking me anything! 🌱", 'bot');
+            return;
+        }
+        
+        // Check if we're rate limited
+        const now = Date.now();
+        const timeSinceLastCall = now - this.lastApiCall;
+        
+        if (this.apiCallCount >= 10 && (now - this.rateLimitResetTime) < 60000) {
+            const waitTime = Math.ceil((60000 - (now - this.rateLimitResetTime)) / 1000);
+            this.addChatMessage(`I'm taking a short break! Please wait ${waitTime} seconds before sending another message. 🌱`, 'bot');
+            return;
+        }
+        
+        if (timeSinceLastCall < 2000) {
+            const waitTime = Math.ceil((2000 - timeSinceLastCall) / 1000);
+            this.addChatMessage(`Please wait ${waitTime} seconds before sending another message. 🌱`, 'bot');
+            return;
+        }
         
         // Add user message to chat
         this.addChatMessage(message, 'user');
         input.value = '';
         
-        // Show typing indicator
-        this.showTypingIndicator();
+        // Disable send button temporarily
+        sendButton.disabled = true;
+        sendButton.style.opacity = '0.5';
         
-        // Send to Gemini API
-        this.sendToGemini(message);
+        // Check if we have a hardcoded response for this message
+        const hardcodedResponse = this.getHardcodedResponse(message);
+        
+        if (hardcodedResponse) {
+            // Use hardcoded response
+            this.showTypingIndicator();
+            setTimeout(() => {
+                this.removeTypingIndicator();
+                this.addChatMessage(hardcodedResponse, 'bot');
+                // Re-enable send button
+                setTimeout(() => {
+                    sendButton.disabled = false;
+                    sendButton.style.opacity = '1';
+                }, 1000);
+            }, 1000);
+        } else {
+            // Show typing indicator and try API
+            this.showTypingIndicator();
+            
+            // Send to Gemini API
+            this.sendToGemini(message).finally(() => {
+                // Re-enable send button after 2 seconds
+                setTimeout(() => {
+                    sendButton.disabled = false;
+                    sendButton.style.opacity = '1';
+                }, 2000);
+            });
+        }
     }
 
     addChatMessage(message, sender) {
@@ -1436,7 +1702,23 @@ class CycleGarden {
         
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
-        contentDiv.innerHTML = message.replace(/\n/g, '<br>');
+        
+        // Handle markdown formatting for bot messages
+        if (sender === 'bot') {
+            let formattedMessage = message
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
+                .replace(/\n\n/g, '</p><p>') // Paragraph breaks
+                .replace(/\n/g, '<br>'); // Line breaks
+            
+            // Wrap in paragraph tags if not already wrapped
+            if (!formattedMessage.startsWith('<p>')) {
+                formattedMessage = `<p>${formattedMessage}</p>`;
+            }
+            
+            contentDiv.innerHTML = formattedMessage;
+        } else {
+            contentDiv.innerHTML = message.replace(/\n/g, '<br>');
+        }
         
         messageDiv.appendChild(contentDiv);
         messagesContainer.appendChild(messageDiv);
@@ -1469,13 +1751,47 @@ class CycleGarden {
     }
 
     
-    async sendToGemini(message) {
+    async sendToGemini(message, useFallbackOnly = false) {
         try {
+            // If fallback only mode, skip API call
+            if (useFallbackOnly) {
+                const fallbackResponse = this.getFallbackResponse(message);
+                this.removeTypingIndicator();
+                this.addChatMessage(`Using my built-in responses! 🌱\n\n${fallbackResponse}`, 'bot');
+                return;
+            }
+            
+            // Check rate limiting
+            const now = Date.now();
+            const timeSinceLastCall = now - this.lastApiCall;
+            
+            // Reset counter every minute
+            if (now - this.rateLimitResetTime > 60000) {
+                this.apiCallCount = 0;
+                this.rateLimitResetTime = now;
+            }
+            
+            // Simple rate limiting: max 10 calls per minute
+            if (this.apiCallCount >= 10) {
+                const waitTime = Math.ceil((60000 - (now - this.rateLimitResetTime)) / 1000);
+                throw new Error(`RATE_LIMIT:${waitTime}:Too many requests. Please wait ${waitTime} seconds.`);
+            }
+            
+            // Minimum 2 seconds between calls
+            if (timeSinceLastCall < 2000) {
+                const waitTime = Math.ceil((2000 - timeSinceLastCall) / 1000);
+                throw new Error(`RATE_LIMIT:${waitTime}:Please wait ${waitTime} seconds before sending another message.`);
+            }
+            
             // Get API key
             const apiKey = this.getApiKey();
             if (!apiKey) {
                 throw new Error('API key not configured');
             }
+            
+            // Update rate limiting counters
+            this.lastApiCall = now;
+            this.apiCallCount++;
 
             // Get user's current cycle phase for context
             const currentPhase = this.getCurrentPhase();
@@ -1504,12 +1820,12 @@ Guidelines:
 
 Respond to the user's question: "${message}"`;
 
-            console.log('Sending request to Gemini API...');
-            console.log('API Key:', apiKey ? 'Present' : 'Missing');
+            //console.log('Sending request to Gemini API...');
+            //console.log('API Key:', apiKey ? 'Present' : 'Missing');
             
             // Use the discovered model or fallback to a known working model
             const modelName = this.availableModel || 'models/gemini-1.5-flash';
-            console.log('Request URL:', `https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${apiKey.substring(0, 10)}...`);
+            //console.log('Request URL:', `https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${apiKey.substring(0, 10)}...`);
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: {
@@ -1530,13 +1846,23 @@ Respond to the user's question: "${message}"`;
                 })
             });
 
-            console.log('Response status:', response.status);
-            console.log('Response ok:', response.ok);
-            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+            //console.log('Response status:', response.status);
+            //console.log('Response ok:', response.ok);
+            //console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('API Error Response:', errorText);
+                
+                // Handle rate limiting specifically
+                if (response.status === 429) {
+                    const errorData = JSON.parse(errorText);
+                    const retryAfter = response.headers.get('retry-after');
+                    const waitTime = retryAfter ? parseInt(retryAfter) : 60;
+                    
+                    throw new Error(`RATE_LIMIT:${waitTime}:${errorData.error?.message || 'Rate limit exceeded'}`);
+                }
+                
                 console.error('Full error details:', {
                     status: response.status,
                     statusText: response.statusText,
@@ -1563,17 +1889,34 @@ Respond to the user's question: "${message}"`;
             console.error('Error calling Gemini API:', error);
             this.removeTypingIndicator();
             
-            let errorMessage = 'I apologize, but I\'m having trouble connecting right now. ';
+            let errorMessage = '';
             
-            if (error.message.includes('API key not configured')) {
-                errorMessage += 'Please check your API configuration. ';
+            // Handle rate limiting specifically
+            if (error.message.startsWith('RATE_LIMIT:')) {
+                const parts = error.message.split(':');
+                const waitTime = parts[1] || 60;
+                const rateLimitMessage = parts[2] || 'Rate limit exceeded';
+                
+                // Use fallback response instead of just error message
+                const fallbackResponse = this.getFallbackResponse(message);
+                errorMessage = `I'm taking a short break from AI responses, but I still want to help! 🌱\n\n${fallbackResponse}\n\n*I'll be back with full AI responses in ${waitTime} seconds.*`;
+            } else if (error.message.includes('API key not configured')) {
+                // Use fallback when API key is missing
+                const fallbackResponse = this.getFallbackResponse(message);
+                errorMessage = `I'm using my built-in responses right now! 🌱\n\n${fallbackResponse}\n\n*Note: AI responses are currently unavailable, but I'm still here to help!*`;
             } else if (error.message.includes('Failed to fetch')) {
-                errorMessage += 'There seems to be a network issue. ';
+                // Use fallback when network fails
+                const fallbackResponse = this.getFallbackResponse(message);
+                errorMessage = `I'm using my offline responses! 🌱\n\n${fallbackResponse}\n\n*Note: I'm working offline right now, but I'm still here to support you!*`;
             } else if (error.message.includes('API request failed')) {
-                errorMessage += 'The API request failed. Please check your API key. ';
+                // Use fallback for other API errors
+                const fallbackResponse = this.getFallbackResponse(message);
+                errorMessage = `I'm using my backup responses! 🌱\n\n${fallbackResponse}\n\n*Note: AI responses are temporarily unavailable, but I'm still here to help!*`;
+            } else {
+                // Use fallback for any other errors
+                const fallbackResponse = this.getFallbackResponse(message);
+                errorMessage = `I'm using my built-in responses! 🌱\n\n${fallbackResponse}\n\n*Note: I'm working with my backup responses right now, but I'm still here to support you!*`;
             }
-            
-            errorMessage += 'Please try again in a moment, or feel free to ask me about cycle support, self-care tips, or any questions you have about your menstrual health! 🌱';
             
             this.addChatMessage(errorMessage, 'bot');
         }
